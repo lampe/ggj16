@@ -1,0 +1,3 @@
+Update = {};
+Update.start = function () {
+}
