@@ -3,28 +3,28 @@ function Player(options) {
   that.options = options;
   that.cursors = game.input.keyboard.createCursorKeys();
   that.life = 3;
+  that.maxHealth = 4;
   that.bp = [];
   that.preload = function () {
     that.loadingSprite = game.load.atlasJSONHash(that.options.name, that.options.path + '.png', that.options.path + '.json');
     game.load.image("health", that.options.healthPaths.full);
     // game.load.audio("playerHit", that.options.hitSound);
-    // for (var i = 0; i < that.bp.length; i++) {
-    //   that.bp[i].preload();
-    // }
+    for (var i = 0; i < that.bp.length; i++) {
+      that.bp[i].preload();
+    }
   }
   that.add = function () {
     that.sprite = game.add.sprite(that.options.position.x, that.options.position.y, that.options.name);
-    healthX = 0;
-    that.health = [];
-    for (var i = 0; i < that.life + 1; i++) {
-      that.health[i] = game.add.sprite(healthX, 0, "health");
-      healthX += 10;
-    }
     that.sprite.update = that.update;
     that.alive = true;
+    that.fullHealth();
     that.sprite.anchor.setTo(0.5, 0.5);
     game.physics.enable(that.sprite, Phaser.Physics.ARCADE);
     that.sprite.body.collideWorldBounds = true;
+    for (var i = 0; i < that.bp.length; i++) {
+      that.bp[i].load();
+      that.bp[i].options.parent = that.sprite;
+    }
   }
   that.basicAnimations = function () {
     game.player.sprite.fireAnimation = that.sprite.animations.add('fire', ['h_fire_0.png', 'h_fire_1.png', 'h_fire_2.png']);
@@ -38,6 +38,62 @@ function Player(options) {
       that.sprite.animations.play('idle', 3, true);
     });
   }
+  that.fullHealth = function () {
+    healthX = 0;
+    that.health = [];
+    for (var i = 0; i < that.maxHealth; i++) {
+      that.health[i] = game.add.sprite(healthX, 0, "health");
+      healthX += 10;
+    }
+  }
+  that.bulletPool = function () {
+    that.bp.push(new BulletPool({
+      type: "JSON",
+      name: "a",
+      fireRate: 1,
+      isActiv: true,
+      size: 30,
+      sprite: 'a',
+      spritesheet: 'assets/bullets/shot',
+      spritesheetSize: {
+        x: 32,
+        y: 32
+      },
+      offset: {
+        x: 0,
+        y: 0
+      },
+      nextShot: 200,
+      velocity: {
+        x: 144,
+        y: -16
+      },
+      startSprite: 0
+    }));
+    that.bp.push(new BulletPool({
+      type: "JSON",
+      name: "b",
+      fireRate: 1,
+      isActiv: true,
+      size: 30,
+      sprite: 'a',
+      spritesheet: 'assets/bullets/shot',
+      spritesheetSize: {
+        x: 32,
+        y: 32
+      },
+      offset: {
+        x: 0,
+        y: 0
+      },
+      nextShot: 200,
+      velocity: {
+        x: 144,
+        y: 16
+      },
+      startSprite: 0
+    }));
+  }
   that.create = function () {
     that.add();
     that.basicAnimations();
@@ -49,9 +105,9 @@ function Player(options) {
 
       if (game.input.keyboard.isDown(Phaser.Keyboard.S)) {
         that.sprite.animations.play('fire', 10, false);
-        for (var i = 0; i < game.player.bp.length; i++) {
-          if (game.player.bp[i].options.isActiv) {
-            game.player.bp[i].fire();
+        for (var i = 0; i < that.bp.length; i++) {
+          if (that.bp[i].options.isActiv) {
+            that.bp[i].fire();
           }
         }
       }
@@ -85,5 +141,6 @@ function Player(options) {
   that.render = function () {
 
   }
+  that.bulletPool();
   return that;
 }

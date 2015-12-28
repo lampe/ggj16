@@ -20,7 +20,19 @@ Lvl1 = function () {
     game.player.preload();
   }
   this.create = function () {
-    game.player.create();
+    var style = {
+      font: "8px gameboy",
+      fill: 'rgb(19, 58, 25)'
+    };
+    Lvl1.text = game.add.text(0, 0, "Level 1: Hell", style);
+    Lvl1.text.position.x = game.width / 2 - Lvl1.text.width / 2;
+    Lvl1.text.position.y = game.height / 2 - Lvl1.text.height / 2;
+    Lvl1.text.tweendown = game.add.tween(Lvl1.text).to({
+      alpha: 0
+    }, 1000, Phaser.Easing.Quadratic.InOut).start();
+    Lvl1.text.tweendown.onComplete.add(function () {
+      game.player.create();
+    });
   }
   this.render = function () {
     Render.start()
