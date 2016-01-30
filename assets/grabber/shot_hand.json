@@ -1,0 +1,36 @@
+{"frames": {
+
+"shot_hand1.png":
+{
+	"frame": {"x":42,"y":0,"w":15,"h":15},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":2,"y":2,"w":15,"h":15},
+	"sourceSize": {"w":21,"h":17}
+},
+"shot_hand2.png":
+{
+	"frame": {"x":0,"y":0,"w":21,"h":17},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":21,"h":17},
+	"sourceSize": {"w":21,"h":17}
+},
+"shot_hand3.png":
+{
+	"frame": {"x":21,"y":0,"w":21,"h":17},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":21,"h":17},
+	"sourceSize": {"w":21,"h":17}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "shot_hand.png",
+	"format": "RGBA8888",
+	"size": {"w":57,"h":17},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:6e8f00ac80e704f940a79fd8efa65ef3:3aa2ad4e0ad06e68b4dcc1f94e571565:10ac73485e1d6f4a1e3bdc3f02200680$"
+}
+}

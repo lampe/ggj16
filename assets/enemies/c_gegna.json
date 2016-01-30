@@ -1,0 +1,20 @@
+{"frames": {
+
+"c_gegna.png":
+{
+	"frame": {"x":0,"y":0,"w":11,"h":11},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":11,"h":11},
+	"sourceSize": {"w":11,"h":11}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "c_gegna.png",
+	"format": "RGBA8888",
+	"size": {"w":11,"h":11},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:70bc739565263a189c36b11b26518e5c:52db849220b9767183b63c10d2db6756:bd949b0f917af521cbc630d99b4c9b90$"
+}
+}

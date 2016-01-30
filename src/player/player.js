@@ -2,19 +2,24 @@ function Player(options) {
   var that = this;
   that.options = options;
   that.cursors = game.input.keyboard.createCursorKeys();
-  that.life = 3;
+  that.grabber = undefined;
   that.maxHealth = 4;
+  that.coolDown = false;
+  that.life = 4;
   that.bp = [];
   that.preload = function () {
     that.loadingSprite = game.load.atlasJSONHash(that.options.name, that.options.path + '.png', that.options.path + '.json');
     game.load.image("health", that.options.healthPaths.full);
-    // game.load.audio("playerHit", that.options.hitSound);
+    game.load.audio("playerHit", that.options.hitSound);
     for (var i = 0; i < that.bp.length; i++) {
       that.bp[i].preload();
     }
+    that.grabber.preload();
   }
   that.add = function () {
     that.sprite = game.add.sprite(that.options.position.x, that.options.position.y, that.options.name);
+    that.hitSound = game.add.audio('playerHit')
+    // that.sprite.parent = that;
     that.sprite.update = that.update;
     that.alive = true;
     that.fullHealth();
@@ -25,15 +30,15 @@ function Player(options) {
       that.bp[i].load();
       that.bp[i].options.parent = that.sprite;
     }
+    that.grabber.load();
   }
   that.basicAnimations = function () {
     game.player.sprite.fireAnimation = that.sprite.animations.add('fire', ['h_fire_0.png', 'h_fire_1.png', 'h_fire_2.png']);
-    that.sprite.animations.add("idle", ['h_idle_0.png', 'h_idle_1.png']);
+    that.sprite.animations.add("idle", ['h_idle_0.png', 'h_idle_0.png', 'h_idle_1.png']);
     that.sprite.animations.add('down', ["h_down_0.png"]);
     that.sprite.animations.add('up', ["h_up_0.png"]);
     that.sprite.animations.add('left', ["h_left_0.png"]);
     that.sprite.animations.add('right', ["h_right_0.png"]);
-
     that.sprite.events.onAnimationComplete.add(function () {
       that.sprite.animations.play('idle', 3, true);
     });
@@ -46,11 +51,35 @@ function Player(options) {
       healthX += 10;
     }
   }
+  that.hit = function () {
+    if (that.coolDown !== true) {
+      that.coolDown = true;
+      game.player.sprite.alpha = 0;
+      game.player.hitSound.play();
+      var tween = game.add.tween(game.player.sprite).to({
+        alpha: 1
+      }, 125, Phaser.Easing.Linear.None, true)
+      tween.repeat(4, 0);
+      game.player.life -= 1;
+      that.health[that.health.length - 1].kill();
+      that.health.pop();
+    }
+    setTimeout(function () {
+      that.coolDown = false;
+    }, 1000);
+  }
+  that.kill = function () {
+    that.health[that.health.length - 1].kill();
+    that.health.pop();
+    that.sprite.kill();
+  }
   that.bulletPool = function () {
+    that.grabber = new Grabber();
     that.bp.push(new BulletPool({
       type: "JSON",
       name: "a",
       fireRate: 1,
+      power: 1,
       isActiv: true,
       size: 30,
       sprite: 'a',
@@ -60,12 +89,12 @@ function Player(options) {
         y: 32
       },
       offset: {
-        x: 0,
+        x: -5,
         y: 0
       },
-      nextShot: 200,
+      nextShot: 100,
       velocity: {
-        x: 144,
+        x: 180,
         y: -16
       },
       startSprite: 0
@@ -74,6 +103,7 @@ function Player(options) {
       type: "JSON",
       name: "b",
       fireRate: 1,
+      power: 1,
       isActiv: true,
       size: 30,
       sprite: 'a',
@@ -86,9 +116,9 @@ function Player(options) {
         x: 0,
         y: 0
       },
-      nextShot: 200,
+      nextShot: 100,
       velocity: {
-        x: 144,
+        x: 180,
         y: 16
       },
       startSprite: 0
@@ -107,8 +137,14 @@ function Player(options) {
         that.sprite.animations.play('fire', 10, false);
         for (var i = 0; i < that.bp.length; i++) {
           if (that.bp[i].options.isActiv) {
-            that.bp[i].fire();
+            that.bp[i].fire(game.player.sprite);
           }
+        }
+      }
+      if (game.input.keyboard.isDown(Phaser.Keyboard.D)) {
+        that.sprite.animations.play('fire', 10, false);
+        if (that.grabber.options.isActiv) {
+          that.grabber.fire();
         }
       }
       if (!game.player.sprite.fireAnimation.isPlaying) {
