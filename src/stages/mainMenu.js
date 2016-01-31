@@ -1,11 +1,17 @@
 MainMenu = function () {
+  this.preload = function () {
+    game.load.image('title', 'assets/title.png');
+  }
   this.create = function () {
-    MainMenu.menuList = ['start', 'options'];
+    MainMenu.menuList = ['start'];
     MainMenu.selectedItem = MainMenu.menuList[0];
     MainMenu.MenuListITems = [];
     MainMenu.cursorInput = game.input.keyboard.createCursorKeys();
     MainMenu.enterKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER)
+    MainMenu.sKey = game.input.keyboard.addKey(Phaser.Keyboard.S)
     MainMenu.cursor = undefined;
+    game.add.sprite(0, 0, 'title');
+
     var style = {
       font: "16px gameboy",
       fill: 'rgb(19, 58, 25)'
@@ -23,7 +29,7 @@ MainMenu = function () {
     Render.start()
   }
   this.update = function () {
-    if (MainMenu.enterKey.isDown && MainMenu.enterKey.repeats === 0) {
+    if ((MainMenu.sKey.isDown && MainMenu.enterKey.repeats === 0) || (MainMenu.enterKey.isDown && MainMenu.enterKey.repeats === 0)) {
       if (MainMenu.menuList[MainMenu.cursor.currentPosition] === 'start') {
         game.state.start('lvl1');
         return;

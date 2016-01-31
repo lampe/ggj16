@@ -19,13 +19,17 @@ function Player(options) {
   that.add = function () {
     that.sprite = game.add.sprite(that.options.position.x, that.options.position.y, that.options.name);
     that.hitSound = game.add.audio('playerHit')
-    // that.sprite.parent = that;
+      // that.sprite.parent = that;
     that.sprite.update = that.update;
     that.alive = true;
     that.fullHealth();
     that.sprite.anchor.setTo(0.5, 0.5);
     game.physics.enable(that.sprite, Phaser.Physics.ARCADE);
     that.sprite.body.collideWorldBounds = true;
+    var multiplierW = 0.4;
+    var multiplierH = 0.3;
+    that.sprite.body.width = that.sprite.body.width * multiplierW
+    that.sprite.body.height = that.sprite.body.height * multiplierH
     for (var i = 0; i < that.bp.length; i++) {
       that.bp[i].load();
       that.bp[i].options.parent = that.sprite;
@@ -72,6 +76,13 @@ function Player(options) {
     that.health[that.health.length - 1].kill();
     that.health.pop();
     that.sprite.kill();
+    for (var i = 0; i < that.health.length; i++) {
+      that.health[i].kill();
+    }
+    setTimeout(function () {
+      Lvl1.destroy();
+      game.state.start("gameOver");
+    }, 1000);
   }
   that.bulletPool = function () {
     that.grabber = new Grabber();
@@ -89,8 +100,8 @@ function Player(options) {
         y: 32
       },
       offset: {
-        x: -5,
-        y: 0
+        x: 0,
+        y: 5
       },
       nextShot: 100,
       velocity: {
@@ -113,8 +124,8 @@ function Player(options) {
         y: 32
       },
       offset: {
-        x: 0,
-        y: 0
+        x: 3,
+        y: 5
       },
       nextShot: 100,
       velocity: {

@@ -6,6 +6,10 @@ function SimpleEnemie(options) {
   this.nextShotAt = 0;
 }
 SimpleEnemie.prototype.preload = function () {
+  game.load.audio('boom1', 'assets/audio/59.wav');
+  game.load.audio('boom2', 'assets/audio/129.wav');
+  game.load.audio('boom3', 'assets/audio/130.wav');
+  game.load.audio('boom3', 'assets/audio/133.wav');
   Enemies.loadingSprite = game.load.atlasJSONHash(this.options.name, this.options.path + '.png', this.options.path + '.json');
   this.animations.kill = game.load.atlasJSONHash(this.options.name + 'kill', 'assets/enemies/boom.png', 'assets/enemies/boom.json');
   for (var i = 0; i < this.bp.length; i++) {
@@ -130,6 +134,11 @@ SimpleEnemie.prototype.update = function () {
   }
 }
 SimpleEnemie.prototype.killAnimation = function (enemie) {
+  soundArray = ['boom1', 'boom2', 'boom3', 'boom4'];
+  r = Math.floor(Math.random() * 3);
+  killSound = game.add.audio(soundArray[r]);
+  killSound.volume = 0.5;
+  killSound.play();
   kill = game.add.sprite(enemie.position.x, enemie.position.y, this.options.name + 'kill');
   kill.anchor.setTo(0.5, 0.5);
   // angelArray = [0, 90, 180, 270]

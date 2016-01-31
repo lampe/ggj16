@@ -387,6 +387,8 @@ function lvl1() {
     game.load.image('background2', 'assets/bg/bg2.png');
     game.load.image('background3', 'assets/bg/fg.png');
     game.load.audio('music', 'assets/music/lvl1.mp3');
+    game.load.audio('grabSound', 'assets/audio/0.wav');
+
     game.player.preload();
     this.ingredientsStack.preload();
     for (var i = 0; i < this.enemies1.types.length; i++) {
@@ -403,28 +405,76 @@ function lvl1() {
       this.enemies3.types[i].preload();
     }
     for (var i = 0; i < this.enemies4.types.length; i++) {
-      this.enemies3.types[i].bulletPool();
-      this.enemies3.types[i].preload();
+      this.enemies4.types[i].bulletPool();
+      this.enemies4.types[i].preload();
     }
     for (var i = 0; i < this.enemies5.types.length; i++) {
-      this.enemies3.types[i].bulletPool();
-      this.enemies3.types[i].preload();
+      this.enemies5.types[i].bulletPool();
+      this.enemies5.types[i].preload();
     }
     for (var i = 0; i < this.enemies6.types.length; i++) {
-      this.enemies3.types[i].bulletPool();
-      this.enemies3.types[i].preload();
+      this.enemies6.types[i].bulletPool();
+      this.enemies6.types[i].preload();
     }
     for (var i = 0; i < this.ingredients.length; i++) {
       this.ingredients[i].preload();
     }
   }
+  this.destroy = function () {
+    Lvl1.music.stop();
+    Lvl1.ingredientsStack.stack = [];
+    clearTimeout(this.timeout2);
+    clearTimeout(this.timeout3);
+    clearTimeout(this.timeout4);
+    clearTimeout(this.timeout5);
+    clearTimeout(this.timeout6);
+    clearTimeout(this.endTimeout);
+    for (var i = 0; i < Lvl1.ingredients.length; i++) {
+      Lvl1.ingredients[i].killAnimation();
+      clearTimeout(Lvl1.ingredients[i].timeout);
+      if (Lvl1.ingredients[i].sprite) {
+
+        Lvl1.ingredients[i].sprite.kill();
+      }
+    }
+    Lvl1.goodOutro = false;
+    Lvl1.ingredients = [];
+    Lvl1.enemies1.destroy();
+    Lvl1.enemies2.destroy();
+    Lvl1.enemies3.destroy();
+    Lvl1.enemies4.destroy();
+    Lvl1.enemies5.destroy();
+    Lvl1.enemies6.destroy();
+    Lvl1.enemies1 = undefined;
+    Lvl1.enemies2 = undefined;
+    Lvl1.enemies3 = undefined;
+    Lvl1.enemies4 = undefined;
+    Lvl1.enemies5 = undefined;
+    Lvl1.enemies6 = undefined;
+    Lvl1.background1a.destroy();
+    Lvl1.background1b.destroy();
+    Lvl1.background2a.destroy();
+    Lvl1.background2b.destroy();
+    Lvl1.background3a.destroy();
+    Lvl1.background3b.destroy();
+    Lvl1.background1a = undefined;
+    Lvl1.background1b = undefined;
+    Lvl1.background2a = undefined;
+    Lvl1.background2b = undefined;
+    Lvl1.background3a = undefined;
+    Lvl1.background3b = undefined;
+    game.player.sprite.destroy();
+    // game.world.destroy();
+  }
   this.create = function () {
+
     var style = {
       font: "8px gameboy",
       fill: 'rgb(19, 58, 25)'
     };
-    fadoutTime = 500;
+    fadoutTime = 4000;
     Lvl1.text = game.add.text(0, 0, "Create this:", style);
+
     Lvl1.text.position.x = game.width / 2 - Lvl1.text.width / 2;
     Lvl1.text.position.y = 10;
     Lvl1.text.tweendown = game.add.tween(Lvl1.text).to({
@@ -463,7 +513,7 @@ function lvl1() {
     Lvl1.text.tweendown = game.add.tween(Lvl1.text).to({
       alpha: 0
     }, fadoutTime, Phaser.Easing.Quadratic.InOut).start();
-    Lvl1.text = game.add.text(0, 0, "s = shot enemy / d = grab ingredient", style);
+    Lvl1.text = game.add.text(0, 0, "s = shoot enemy / d = grab ingredient", style);
     Lvl1.text.position.x = game.width / 2 - Lvl1.text.width / 2;
     Lvl1.text.position.y = game.height - 20;
     Lvl1.text.tweendown = game.add.tween(Lvl1.text).to({
@@ -484,14 +534,14 @@ function lvl1() {
       Lvl1.background3b = game.add.sprite(1280, 0, 'background3');
       Lvl1.background3a.bringToTop();
       Lvl1.background3b.bringToTop();
-      b1Speed = 0.5 / 5;
-      b2Speed = 1 / 5;
-      b3Speed = 4 / 5;
+      b1Speed = 0.2;
+      b2Speed = 0.5;
+      b3Speed = 1;
       this.scrollBackground = true;
       game.player.create();
-      music = game.add.audio('music');
-      music.volume = 0.2;
-      music.play();
+      Lvl1.music = game.add.audio('music');
+      Lvl1.music.volume = 0.2;
+      Lvl1.music.play();
       for (var i = 0; i < this.enemies1.types.length; i++) {
         this.enemies1.types[i].create(this.enemies1);
       }
@@ -506,7 +556,7 @@ function lvl1() {
       });
 
       g = this.enemies2;
-      setTimeout(function () {
+      this.timeout2 = setTimeout(function () {
         for (var i = 0; i < g.types.length; i++) {
           g.types[i].create(g);
         }
@@ -522,7 +572,7 @@ function lvl1() {
       }, 6000)
 
       g3 = this.enemies3;
-      setTimeout(function () {
+      this.timeout3 = setTimeout(function () {
         for (var i = 0; i < g3.types.length; i++) {
           g3.types[i].create(g3);
         }
@@ -537,7 +587,7 @@ function lvl1() {
         });
       }, 16000)
       g4 = this.enemies4;
-      setTimeout(function () {
+      this.timeout4 = setTimeout(function () {
         for (var i = 0; i < g4.types.length; i++) {
           g4.types[i].create(g4);
         }
@@ -552,7 +602,7 @@ function lvl1() {
         });
       }, 25000)
       g5 = this.enemies5;
-      setTimeout(function () {
+      this.timeout5 = setTimeout(function () {
         for (var i = 0; i < g5.types.length; i++) {
           g5.types[i].create(g5);
         }
@@ -567,7 +617,7 @@ function lvl1() {
         });
       }, 33000)
       g6 = this.enemies6;
-      setTimeout(function () {
+      this.timeout6 = setTimeout(function () {
         for (var i = 0; i < g6.types.length; i++) {
           g6.types[i].create(g6);
         }
@@ -581,6 +631,14 @@ function lvl1() {
           delayY += 600;
         });
       }, 44000)
+      this.endTimeout = setTimeout(function () {
+        Lvl1.destroy()
+        if (Lvl1.goodOutro) {
+          game.state.start('goodOutro');
+        } else {
+          game.state.start('badOutro');
+        }
+      }, 60000);
       var spawnTimer = 1;
       for (var i = 0; i < this.ingredients.length; i++) {
         this.ingredients[i].create(this.ingredients, spawnTimer);
@@ -669,6 +727,9 @@ function lvl1() {
     for (var i = 0; i < Lvl1.ingredients.length; i++) {
       game.physics.arcade.collide(Lvl1.ingredients[i].sprite, game.player.grabber.group, function (ingredient, grabber) {
         Lvl1.ingredientsStack.add(ingredient);
+        grabSound = game.add.audio('grabSound');
+        grabSound.volume = 1;
+        grabSound.play();
         grabber.kill();
         ingredient.kill();
       });

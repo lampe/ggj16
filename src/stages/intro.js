@@ -13,7 +13,7 @@ Intro = function () {
     Intro.text.tweendown.onComplete.add(function () {
       Intro.sound.play();
       Intro.sound.onStop.add(function () {
-        game.state.start("mainMenu");
+        game.state.start("introStory");
       });
     });
   }

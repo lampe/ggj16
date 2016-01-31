@@ -68,6 +68,7 @@ IngredientsStack.prototype.checkStack = function () {
       font: "16px gameboy",
       fill: 'rgb(19, 58, 25)'
     };
+    Lvl1.goodOutro = true;
     Lvl1.yeahSound = game.add.audio('yeah');
     Lvl1.yeahSound.play();
     Lvl1.text = game.add.text(0, 0, "OH YEAH!", style);

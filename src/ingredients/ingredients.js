@@ -14,7 +14,7 @@ function getRandomArbitrary(min, max) {
 }
 Ingredients.prototype.create = function (group, spawnTimer) {
   var that = this;
-  setTimeout(function () {
+  that.timeout = setTimeout(function () {
     y = getRandomArbitrary(32, game.height - 32);
 
     that.sprite = game.add.sprite(that.options.position.x, y, that.options.name);
